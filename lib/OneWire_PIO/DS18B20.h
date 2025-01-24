@@ -32,12 +32,12 @@ public:
 
 	/***
 	 * Initialise the DS18B20
-	 * @param pio
-	 * @param gpio
+	//  * @param pio
+	//  * @param gpio
 	 * @return
 	 */
 	// void DS18Initalize(PIO p, int gpio);
-	void DS18Initalize(PIO p, int gpio);
+	void DS18Initalize();
 
 	/***
 	 * Covert Temperature
@@ -74,7 +74,7 @@ private:
 	uint8_t crc8(uint8_t *data, uint8_t len);
 
 	PIO pio;	
-	uint8_t gp;
+	uint8_t gpio;
 	uint sm;
 };
 

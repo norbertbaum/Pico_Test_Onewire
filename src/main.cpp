@@ -98,7 +98,7 @@ void loop()
 // }
 
 void getTempDS27() {
-    ds27->DS18Initalize(pio0, 27); // Reinitialize the PIO
+    ds27->DS18Initalize(); // Reinitialize the PIO
     ds27->convert();
     // sleep_ms(1000);
     temp = ds27->getTemperature();
@@ -106,7 +106,7 @@ void getTempDS27() {
 }
 
 void getTempDS28() {
-    ds28->DS18Initalize(pio0, 28); // Reinitialize the PIO
+    ds28->DS18Initalize(); // Reinitialize the PIO
     ds28->convert();
     // sleep_ms(1000);
     temp = ds28->getTemperature();

@@ -29,7 +29,10 @@ DS18B20::DS18B20()
 DS18B20::DS18B20(PIO p, uint8_t gp)
 {
     this->sm = 0;
-    DS18Initalize(p, gp);
+    this->pio = p;
+    this->gpio = gp;
+    
+    DS18Initalize();
 }
 
 DS18B20::~DS18B20()
@@ -165,10 +168,8 @@ float DS18B20::getTemperature()
 //     Serial.printf("Initialized DS18B20 on GPIO %d with PIO %d and SM %d\n", gpio, pio == pio0 ? 0 : 1, sm);
 // }
 
-void DS18B20::DS18Initalize(PIO p, int gpio)
+void DS18B20::DS18Initalize()
 {
-    pio = p;
-    gp = gpio;
     // sm = sm_id; // Use the explicitly provided state machine
 
     pio_sm_unclaim(pio, sm);           // Free the state machine (if claimed earlier)
