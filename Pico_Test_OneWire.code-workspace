@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"name": "Pico_Test_OneWire",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
