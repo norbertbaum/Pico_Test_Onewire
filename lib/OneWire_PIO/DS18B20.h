@@ -31,21 +31,6 @@ public:
 	virtual ~DS18B20();
 
 	/***
-	 * Initialise the DS18B20
-	//  * @param pio
-	//  * @param gpio
-	 * @return
-	 */
-	// void DS18Initalize(PIO p, int gpio);
-	void DS18Initalize();
-
-	/***
-	 * Covert Temperature
-	 * Leave 1000ms before getting temperature
-	 */
-	void convert();
-
-	/***
 	 * Get term in Celsius. Covert should be called 1000ms before
 	 * @param pio
 	 * @param sm
@@ -71,7 +56,25 @@ private:
 	/***
 	 * Return CRC8 of the data
 	 */
-	uint8_t crc8(uint8_t *data, uint8_t len);
+	static uint8_t crc8(uint8_t *data, uint8_t len);
+
+		/***
+	 * Initialise the DS18B20
+	//  * @param pio
+	//  * @param gpio
+	 * @return
+	 */
+	// void DS18Initalize(PIO p, int gpio);
+	void DS18Initalize();
+
+	bool isDeviceConnected();
+	void cleanup();
+
+	/***
+	 * Covert Temperature
+	 * Leave 1000ms before getting temperature
+	 */
+	void convert();
 
 	PIO pio;	
 	uint8_t gpio;
