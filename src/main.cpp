@@ -23,8 +23,8 @@ void setup()
 
   ds27 = new DS18B20(pio0, 27);
   ds28 = new DS18B20(pio0, 28);  
-  sensors[0] = ds27;
-  sensors[1] = ds28;
+  sensors[0] = ds28;
+  sensors[1] = ds27;
   sensors[2] =  new DS18B20(pio0, 26); // NICHT angeschlossen!
   // sensors[2] = new DS18B20(pio0, 26);
 
