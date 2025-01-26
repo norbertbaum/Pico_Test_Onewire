@@ -11,11 +11,9 @@
 * Geändert Norbert Baum
 * 23.01.2025
 * ToDO:
-- Methode die alles macht (Cleanup, etc)
 - die letzten x Werte speichern und Mittelwert bilden
 - Fehlerbehandlung
 - Namespace?
-- Tests mit mehreren Sensoren
 - UnitTests?
 */
 
@@ -34,15 +32,11 @@ DS18B20::DS18B20(PIO p, uint8_t gp)
     this->sm = 0;
     this->pio = p;
     this->gpio = gp;
-
-    // DS18Initalize();
 }
 
 DS18B20::~DS18B20()
 {
-    // NOP
-    pio_sm_unclaim(this->pio, this->sm);     // Free the state machine (if claimed earlier)
-    pio_clear_instruction_memory(this->pio); // Clear the instruction memory
+    this ->cleanup();
 }
 
 /***
@@ -63,7 +57,9 @@ uint8_t DS18B20::crc8(uint8_t *data, uint8_t len)
             temp = (crc ^ databyte) & 0x01;
             crc >>= 1;
             if (temp)
+            {
                 crc ^= 0x8C;
+            }
             databyte >>= 1;
         }
     }
@@ -130,13 +126,17 @@ float DS18B20::getTemperature()
         this->readBytes(data, 9);
         uint8_t crc = DS18B20::crc8(data, 9);
         if (crc != 0)
+        {
             return -2000;
+        }
         int t1 = data[0];
         int t2 = data[1];
         int16_t temp1 = (t2 << 8 | t1);
         volatile float temp = (float)temp1 / 16;
 
         this->cleanup();
+
+        Serial.printf("DS18B20 - %d Temp: %.2f°C\r\n", this->gpio, temp);
 
         return temp;
     }
