@@ -6,8 +6,7 @@
  *      Author: jondurrant
  */
 
-#ifndef DS18B20PIO_SRC_DS18B20_H_
-#define DS18B20PIO_SRC_DS18B20_H_
+
 
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
@@ -31,9 +30,7 @@ public:
 	virtual ~DS18B20();
 
 	/***
-	 * Get term in Celsius. Covert should be called 1000ms before
-	 * @param pio
-	 * @param sm
+	 * Get term in Celsius. Covert should be called 1000ms before	 
 	 * @return
 	 */
 	float getTemperature();
@@ -67,6 +64,7 @@ private:
 	// void DS18Initalize(PIO p, int gpio);
 	void DS18Initalize();
 
+	float readTemperature();
 	bool isDeviceConnected();
 	void cleanup();
 
@@ -80,5 +78,3 @@ private:
 	uint8_t gpio;
 	uint sm;
 };
-
-#endif /* DS18B20PIO_SRC_DS18B20_H_ */

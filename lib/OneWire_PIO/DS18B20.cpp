@@ -11,7 +11,7 @@
 * Geändert Norbert Baum
 * 23.01.2025
 * ToDO:
-- die letzten x Werte speichern und Mittelwert bilden
+- die letzten x Werte speichern und Mittelwert bilden -> sollte eigentlich nicht mehr passieren
 - Fehlerbehandlung
 - Namespace?
 - UnitTests?
@@ -21,6 +21,10 @@
 #include "DS18B20.h"
 #include "DS18B20_ROM.h"
 #include "OneWire_ROM.h"
+
+#define VALID_MIN_TEMP -55.0f // Minimal gültige Temperatur (Laut Datenblatt)
+#define VALID_MAX_TEMP 125.0f // Maximal gültige Temperatur (Laut Datenblatt)
+
 
 DS18B20::DS18B20()
 {
@@ -36,7 +40,7 @@ DS18B20::DS18B20(PIO p, uint8_t gp)
 
 DS18B20::~DS18B20()
 {
-    this ->cleanup();
+    this->cleanup();
 }
 
 /***
@@ -120,19 +124,13 @@ float DS18B20::getTemperature()
         // Serial.printf("getTemperature\n");
         // Serial.printf("SM: %d\n", sm);
 
-        uint8_t d[2] = {OneWire_SKIP_ROM, DS18B20_READ_SCRATCHPAD};
-        this->writeBytes(d, 2);
-        uint8_t data[9];
-        this->readBytes(data, 9);
-        uint8_t crc = DS18B20::crc8(data, 9);
-        if (crc != 0)
-        {
-            return -2000;
+        volatile float temp = this->readTemperature();
+        this->cleanup();
+
+        if(temp < VALID_MIN_TEMP || temp > VALID_MAX_TEMP) {
+            Serial.printf("DS18B20 - GPIO %d invalid temperature: %.2f°C\r\n", this->gpio, temp);
+            return -2000; // Return null?
         }
-        int t1 = data[0];
-        int t2 = data[1];
-        int16_t temp1 = (t2 << 8 | t1);
-        volatile float temp = (float)temp1 / 16;
 
         this->cleanup();
 
@@ -141,7 +139,29 @@ float DS18B20::getTemperature()
         return temp;
     }
 
+    Serial.printf("DS18B20 - GPIO %d not connected\r\n", this->gpio);
+
     return -2000;
+}
+
+float DS18B20::readTemperature()
+{
+    uint8_t d[2] = {OneWire_SKIP_ROM, DS18B20_READ_SCRATCHPAD};
+    this->writeBytes(d, 2);
+    uint8_t data[9];
+    this->readBytes(data, 9);
+    uint8_t crc = DS18B20::crc8(data, 9);
+    if (crc != 0)
+    {
+        Serial.printf("DS18B20 - GPIO %d CRC-Fehle\r\n", this->gpio);
+        return -2000;
+    }
+    int t1 = data[0];
+    int t2 = data[1];
+    int16_t temp1 = (t2 << 8 | t1);
+    volatile float temp = (float)temp1 / 16;
+
+    return temp;
 }
 
 bool DS18B20::isDeviceConnected()
